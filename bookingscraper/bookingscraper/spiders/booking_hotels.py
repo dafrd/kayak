@@ -1,27 +1,35 @@
 #from credentials import access_key, secret_access_key
 #from http import client
-from gc import callbacks
+#from gc import callbacks
 import scrapy
 import json
 from scrapy.crawler import CrawlerProcess
 import os
 import logging
-import destinations as dst
+#import destinations as dst
 #import boto3
 #from botocore.client import Config as BotoConfig
 
 class BookingHotelsSpider(scrapy.Spider):
     name = 'bookinghotels'
-    search_url = 'https://www.booking.com'
+    search_url = 'https://www.booking.com/searchresults.en-gb.html?'
     urls_destinations=[]
     #https://www.booking.com/searchresults.fr.html?ss=Toulon&ssne=Toulon
-    start_urls=['https://www.booking.com/']
+    start_urls=['https://www.booking.com']
 
     def parse(self, response):
         data = {
-            'ss': 'Toulon' 
+            'ss': 'Toulon',
+            'dest_type' : 'city',
+            'checkin': '2022-09-09',
+            'checkout': '2022-09-12'
+
+            #'checkin_year' : '2022',
+            #'checking_month' : '09', 
+            #'checkout_year': '2022',
+            #'checkout_month' : '09'
         }
-        yield scrapy.FormRequest(url=self.search_url,formdata=data,callback=self.parse_hotels)
+        yield scrapy.FormRequest(response,formdata=data,callback=self.parse_hotels)
         # FormRequest used to make a search in Paris
         #return scrapy.FormRequest.from_response(
         #    response,
@@ -29,12 +37,22 @@ class BookingHotelsSpider(scrapy.Spider):
         #    callback=self.after_search
       
     
-    def parse_hotel(self, response):
-        for hotel in response.css
+    def parse_hotels(self, response):
+        print("pouet"+response.url)
+        #yield{
+        #        'blabla' : 'blabla',
+        #        'hotel_name' : response.xpath('//div[@data-testid="title"]/text()').get()
+        #    }
+        for hotel in response.xpath('//div[@data-testid="property-card"]'):
+            yield{
+                'blabla' : 'blabla',
+                'hotel_name' : hotel.xpath('//div[@data-testid="title"]/text()').get()
+            }
+
 
 # Name of the file where the results will be saved
-path="01_scraping/json/"
-filename = "espn_scores.json"
+path="bookingscraper/json/"
+filename = "booking_hotels.json"
 
 # if the file exist, remove this
 if filename in os.listdir(path):
@@ -57,12 +75,10 @@ process = CrawlerProcess(settings = {
 })
 
 # Start the crawling using the spider you defined above
-process.crawl(ESPNScoresSpider)
+process.crawl(BookingHotelsSpider)
 process.start()
 
-client = boto3.client('s3',aws_access_key_id=os.environ['AWS_ACCESS_KEY'],aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
-
-upload_file_bucket = "nflpredictor-scrapy"
-upload_file_key = filename
-
-client.upload_file(path+filename,upload_file_bucket,upload_file_key)
+#client = boto3.client('s3',aws_access_key_id=os.environ['AWS_ACCESS_KEY'],aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
+#upload_file_bucket = "nflpredictor-scrapy"
+#upload_file_key = filename
+#client.upload_file(path+filename,upload_file_bucket,upload_file_key)
