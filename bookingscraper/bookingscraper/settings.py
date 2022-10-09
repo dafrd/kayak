@@ -18,6 +18,12 @@ NEWSPIDER_MODULE = 'bookingscraper.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
+COOKIES_ENABLED = True
+COOKIES_DEBUG = True
+
+HTTPERROR_ALLOW_ALL = True
+REDIRECT_ENABLED = False
+USER_AGENT = 'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
