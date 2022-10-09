@@ -13,7 +13,7 @@ from http import client
 import json
 from scrapy.crawler import CrawlerProcess
 import logging
-#import boto3
+import datetime
 #from botocore.client import Config as BotoConf
 
 class BookingSpider(scrapy.Spider):
@@ -24,10 +24,16 @@ class BookingSpider(scrapy.Spider):
 
     warmer_cities=[]
     #os.path.abspath(os.getcwd())
+
+    #today = 
+
     weather_df = pd.read_csv ('weather.csv')
 
+    checkin = str(datetime.date.today())
+    checkout = str(datetime.date.today() + datetime.timedelta(days=2))
+
     for index, row in weather_df.iterrows():
-        warmer_cities.append('https://www.booking.com/searchresults.fr.html?group_adults=2&checkin=2022-10-09&ss='+row['city']+'&no_rooms=1&checkout=2022-10-11&lang=fr&order=review_score_and_price')
+        warmer_cities.append('https://www.booking.com/searchresults.fr.html?group_adults=2&checkin='+checkin+'&ss='+row['city']+'&no_rooms=1&checkout='+checkout+'&lang=fr&order=review_score_and_price')
         #print(row['city'])
         #weather_df = weather_df.head()
         #for city in weather_df.iterrows():
@@ -36,7 +42,7 @@ class BookingSpider(scrapy.Spider):
     #warmer_cities = pd.DataFrame(warmer_cities)
     #warmer_cities = warmer_cities.head(6)
     #warmer_cities
-
+    warmer_cities = warmer_cities[:5]
     start_urls=warmer_cities
 
     #https://www.booking.com/searchresults.fr.html?group_adults=2&checkin=2022-10-09&ss=Marseille&no_rooms=1&checkout=2022-10-11&lang=fr&order=review_score_and_price
@@ -52,6 +58,8 @@ class BookingSpider(scrapy.Spider):
                     'city' : response.xpath('//*[@id="bodyconstraint-inner"]/div[1]/div/div/div/nav/ol/li[4]/span/a/span/text()').get(),
                     'hotel_name' : hotel.css('div[data-testid="title"]::text').get(),
                     'hotel_url': hotel.css('a[data-testid="title-link"]::attr(href)').get(),
+                    'hotel_grade': hotel.css('div[data-testid="review-score"] > div::text').get(),
+                    'price' : hotel.css('span[data-testid="price-and-discounted-price"]::text').get()
                     #'hotel_rating': ,
                     #'hotel_price': ,hote
                     #'week': response.css('div.custom--week.is-active > span.week.week-range::text').get(),
