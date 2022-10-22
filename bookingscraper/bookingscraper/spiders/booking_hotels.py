@@ -50,34 +50,33 @@ class BookingSpider(scrapy.Spider):
     #def __init__(self, *args):
 
     def parse(self, response):
-
         for hotel in response.css('div[data-testid="property-card"]'):
-            #try:
+            hotel_url = hotel.css('a[data-testid="title-link"]::attr(href)').get()
+            hotel_city = response.xpath('//*[@id="bodyconstraint-inner"]/div[1]/div/div/div/nav/ol/li[4]/span/a/span/text()').get()
+            yield response.follow(hotel_url, callback=self.hotel_detail, cb_kwargs = {"hotel_city" : hotel_city})
+                #yield response.follow(hotel_url, callback=self.)
                 #idgame = scores.css('section.Scoreboard.bg-clr-white.flex.flex-auto.justify-between::attr(id)').get()
-                yield{
-                    'city' : response.xpath('//*[@id="bodyconstraint-inner"]/div[1]/div/div/div/nav/ol/li[4]/span/a/span/text()').get(),
-                    'hotel_name' : hotel.css('div[data-testid="title"]::text').get(),
-                    'hotel_url': hotel.css('a[data-testid="title-link"]::attr(href)').get(),
-                    'hotel_grade': hotel.css('div[data-testid="review-score"] > div::text').get(),
-                    'price' : hotel.css('span[data-testid="price-and-discounted-price"]::text').get()
-                    #'hotel_rating': ,
-                    #'hotel_price': ,hote
-                    #'week': response.css('div.custom--week.is-active > span.week.week-range::text').get(),
-                    #'season' : split[9],
-                    #'week' : split[7],
-                    #'awayteam': scores.css('div.ScoreCell__TeamName.ScoreCell__TeamName--shortDisplayName.truncate.db::text').get(),
-                    #'hometeam': scores.css('div.ScoreCell__TeamName.ScoreCell__TeamName--shortDisplayName.truncate.db::text').extract()[1],
-                    #'awayscore' : scores.css('div.ScoreCell__Score.h4.clr-gray-01.fw-heavy.tar.ScoreCell_Score--scoreboard.pl2::text').get(),
-                    #'homescore': scores.css('div.ScoreCell__Score.h4.clr-gray-01.fw-heavy.tar.ScoreCell_Score--scoreboard.pl2::text').extract()[1],
-                    #'gamecast' : str('https://espn.com')+scores.css('a.AnchorLink.Button.Button--sm.Button--anchorLink.Button--alt.mb4.w-100.mr2::attr(href)').extract()[0],
-                    #'boxscore' : str('https://espn.com')+scores.css('a.AnchorLink.Button.Button--sm.Button--anchorLink.Button--alt.mb4.w-100.mr2::attr(href)').extract()[1],
-                    #'idgame' : scores.css('section.Scoreboard.bg-clr-white.flex.flex-auto.justify-between::attr(id)').get(),
-                    #'awayteam global record' : scores.css('span.ScoreboardScoreCell__Record::text').get(),
-                    #'awayteam away record' : scores.css('span.ScoreboardScoreCell__Record::text').extract()[1],
-                    #'hometeam global record' : scores.xpath('//*[@id="'+idgame+'"]/div[1]/div/div[1]/div/div/ul/li[2]/div[1]/div[2]/span[1]/text()').get(),
-                    #'hometeam home record' : scores.xpath('//*[@id="'+idgame+'"]/div[1]/div/div[1]/div/div/ul/li[2]/div[1]/div[2]/span[2]/text()').get()
-                }
-           
+                
+                #yield{
+                #     'city' : response.xpath('//*[@id="bodyconstraint-inner"]/div[1]/div/div/div/nav/ol/li[4]/span/a/span/text()').get(),
+                #     'hotel_name' : hotel.css('div[data-testid="title"]::text').get(),
+                #     'hotel_url': hotel.css('a[data-testid="title-link"]::attr(href)').get(),
+                #     'hotel_grade': hotel.css('div[data-testid="review-score"] > div::text').get(),
+                #     'hotel_description' : hotel.xpath('/div[1]/div[2]/div/div[1]/div[1]/div/div[4]/text()').extract()
+                #     #'price' : hotel.css('span[data-testid="price-and-discounted-price"]::text').get()
+                # }
+
+    def hotel_detail(self, response, hotel_city):
+            yield {
+                #'hotel_city' : response.xpath('//*[@id="breadcrumb"]/ol/li[4]/div/a/text()').get(),
+                'hotel_city' : hotel_city,
+                'hotel_url' : response.url,             
+                'hotel_name' : response.xpath('//*[@id="hp_hotel_name"]/div/div/h2/text()').get(),
+                "hotel_description" : response.xpath('//*[@id="property_description_content"]/p/text()').getall(),
+                #'hotel_name ' : response.css('div[id="hp_hotel_name"] > div::text').get()
+                'hotel_score' :  response.xpath('//*[@id="js--hp-gallery-scorecard"]/a/div/div/div/div/div[1]/text()').get(),
+                'hotel_coord': response.xpath('//*[@id="showMap2"]/span/@data-bbox').get()   
+            }        
 
 # Name of the file where the results will be saved
 path="json/"
