@@ -75,7 +75,7 @@ class BookingSpider(scrapy.Spider):
                 "hotel_description" : response.xpath('//*[@id="property_description_content"]/p/text()').getall(),
                 #'hotel_name ' : response.css('div[id="hp_hotel_name"] > div::text').get()
                 'hotel_score' :  response.xpath('//*[@id="js--hp-gallery-scorecard"]/a/div/div/div/div/div[1]/text()').get(),
-                'hotel_coord': response.xpath('//*[@id="showMap2"]/span/@data-bbox').get()   
+                'hotel_coord': response.xpath('//*[@id="showMap2"]/a/@data-atlas-latlng').get()   
             }        
 
 # Name of the file where the results will be saved
