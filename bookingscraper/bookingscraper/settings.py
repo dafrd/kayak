@@ -12,7 +12,6 @@ BOT_NAME = 'bookingscraper'
 SPIDER_MODULES = ['bookingscraper.spiders']
 NEWSPIDER_MODULE = 'bookingscraper.spiders'
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'bookingscraper (+http://www.yourdomain.com)'
 
@@ -25,6 +24,9 @@ HTTPERROR_ALLOW_ALL = True
 REDIRECT_ENABLED = False
 USER_AGENT = 'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
 
+#ITEM_PIPELINES = {
+#   'bookingscraper.pipelines.BookingscraperPipeline': 300,
+#}
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
