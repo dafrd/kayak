@@ -1,6 +1,6 @@
-# kayak
+# Kayak project
 
-Link to the video : https://share.vidyard.com/watch/kjQp1jwreecE1KCcUJLZRH?
+Link to the explanatory video : https://share.vidyard.com/watch/kjQp1jwreecE1KCcUJLZRH?
 
 Plan your trip with Kayak
 Company's description 📇
